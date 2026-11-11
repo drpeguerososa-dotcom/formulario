@@ -1,0 +1,310 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>Formulario de pre-consulta</title><style>*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;min-height:100vh;background:linear-gradient(160deg,#0b6fa4,#19b5e6);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1b2a35;padding:14px 12px 110px}#app{max-width:560px;margin:0 auto}.cab{color:#fff;text-align:center;margin:4px 0 14px}.cab .doc{font-size:19px;font-weight:800}.cab .sub{font-size:14px;opacity:.92;margin-top:2px}.barra{height:8px;background:rgba(255,255,255,.35);border-radius:6px;margin:12px 4px 0;overflow:hidden}.bar-i{height:100%;background:#fff;border-radius:6px;transition:width .25s}.card{background:#fff;border-radius:22px;padding:22px 18px 20px;box-shadow:0 12px 34px rgba(0,40,70,.26)}.paso{font-size:13px;font-weight:700;color:#0b6fa4;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}h1{font-size:22px;line-height:1.25;margin:0 0 10px;color:#0b3d5c}h2{font-size:16px;margin:20px 0 6px;color:#0b3d5c}p,li{font-size:16px;line-height:1.5}p{margin:0 0 12px}.intro{color:#33495a}ul{padding-left:20px;margin:0 0 14px}li{margin:0 0 6px}.preg{border-top:1px solid #e4ecf1;padding:16px 0 4px}.preg:first-of-type{border-top:0}.preg.fuerte{background:#f1f6fa;border-radius:14px;padding:14px 12px;margin:10px 0;border-top:0}.q{font-size:16.5px;font-weight:600;line-height:1.4;margin:0 0 10px}.ops{display:flex;flex-wrap:wrap;gap:8px}.ops.v{flex-direction:column}.ops.num button{min-width:46px;flex:0 0 auto}.ops button,.ops select{font-family:inherit}.ops button{border:2px solid #c9d9e4;background:#fff;color:#1b2a35;border-radius:12px;min-height:46px;padding:9px 14px;font-size:16px;line-height:1.3;text-align:left;cursor:pointer}.ops.h button,.ops.num button{text-align:center}.ops button[aria-pressed=true]{background:#0f4c5c;border-color:#0f4c5c;color:#fff;font-weight:700}.ops select,textarea{width:100%;border:2px solid #c9d9e4;border-radius:12px;padding:12px;font-size:16px;color:#1b2a35;background:#fff}textarea{min-height:88px;resize:vertical;font-family:inherit}.ayuda{margin:10px 0 6px;font-size:15px;line-height:1.45;background:#fdeaec;color:#7a1f2a;border-radius:12px;padding:0}.ayuda:not(:empty){padding:12px 14px}.ayuda a{color:#7a1f2a;font-weight:700}.mapas{display:flex;gap:6px;justify-content:center;margin:8px 0}.mapas figure{margin:0;text-align:center;flex:1}.mapas svg{width:100%;max-width:190px;height:auto}.mapas figcaption{font-size:13px;color:#566976}.zona{fill:#eaf2f8;stroke:#8fb2c9;stroke-width:1;cursor:pointer}.zona.sel{fill:#d63a49;stroke:#8a1f2c}.zona:focus{outline:none;stroke:#ffb703;stroke-width:3}.marcadas{font-size:15px;color:#33495a;margin:6px 0 10px;min-height:22px}.pie{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -6px 24px rgba(0,40,70,.22);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}.pie .in{max-width:560px;margin:0 auto;display:flex;gap:10px;align-items:center}.est{flex:1;font-size:13px;color:#566976;text-align:center}button.g,a.g{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border:0;border-radius:12px;font-size:17px;font-weight:700;font-family:inherit;color:#fff;background:#0f4c5c;cursor:pointer;text-decoration:none}button.g.sec{background:#fff;color:#0f4c5c;border:2px solid #0f4c5c}button.g.ok{background:#198754}button.g:disabled{opacity:.5}.falta{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #e4ecf1;font-size:16px}.msg{border-radius:14px;padding:14px 16px;font-size:16px;line-height:1.45;margin:0 0 14px}.m-ok{background:#e3f6ea;color:#0f5a32}.m-er{background:#fff4d6;color:#7a5200}button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #ffb703;outline-offset:2px}</style></head><body><div id="app"></div><script>function clienteForm_(D){
+  var raiz = document.getElementById("app");
+  var NS = "http://www.w3.org/2000/svg";
+  var def = D.def || {}, secs = def.secciones || [];
+  var A = D.a || {};
+  A.radio = A.radio || {}; A.multi = A.multi || {}; A.txt = A.txt || {};
+  var pantalla = -1, timer = null, enviando = false, estado = null;
+  var CONTROL = { "fsfi|gate": 1, "hab|tabaco": 1, "hab|alcohol": 1, "hab|opioides": 1 };
+
+  function h(tag, attrs){
+    var n = document.createElement(tag);
+    if(attrs) for(var k in attrs){
+      var v = attrs[k];
+      if(v === null || v === undefined || v === false) continue;
+      if(k === "class") n.className = v;
+      else if(k === "text") n.textContent = v;
+      else if(k.indexOf("on") === 0) n[k] = v;
+      else n.setAttribute(k, v === true ? "" : v);
+    }
+    for(var i = 2; i < arguments.length; i++){
+      var c = arguments[i];
+      if(c === null || c === undefined || c === false) continue;
+      if(Array.isArray(c)) c.forEach(function(x){ if(x) n.appendChild(typeof x === "string" ? document.createTextNode(x) : x); });
+      else n.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    }
+    return n;
+  }
+  function visible(key){
+    if(key.indexOf("fsfi|") === 0 && key !== "fsfi|gate") return A.radio["fsfi|gate"] === "S";
+    if(key === "hab|cigarrillos") return A.radio["hab|tabaco"] === "Fuma";
+    if(key.indexOf("hab|cage.") === 0) return !!A.radio["hab|alcohol"] && A.radio["hab|alcohol"] !== "No bebe";
+    if(key === "hab|opioidesCual") return A.radio["hab|opioides"] === "Sí";
+    return true;
+  }
+  function claves(sec){
+    var out = [];
+    sec.bloques.forEach(function(b){
+      if(b.tipo === "tabla") b.items.forEach(function(it){ out.push(b.q + "|" + it.i); });
+      else if(b.tipo === "preg") out.push(b.q + "|" + b.i);
+    });
+    return out.filter(visible);
+  }
+  function sinContestar(sec){ return claves(sec).filter(function(k){ return A.radio[k] === undefined; }); }
+  function urgente(){ return Number(A.radio["phq9|8"]) > 0; }
+  function contacto(){
+    return D.tel ? " También puede escribir o llamar hoy al consultorio: " + D.tel + "." : "";
+  }
+  function textoAyuda(nodo){
+    nodo.textContent = "Gracias por contestar con sinceridad. Si siente que podría hacerse daño o piensa en quitarse la vida, llame ahora al ";
+    nodo.appendChild(h("a", { href: "tel:911", target: "_top", text: "911" }));
+    nodo.appendChild(document.createTextNode(" o vaya a la emergencia más cercana." + contacto() + " No tiene que pasar por esto sola."));
+  }
+
+  /* ----- guardado: cada cambio se guarda solo a los 1.2 segundos ----- */
+  function marcar(t){ var e = document.getElementById("est"); if(e) e.textContent = t; estado = t; }
+  function limpiarOcultas(){ Object.keys(A.radio).forEach(function(k){ if(!visible(k)) delete A.radio[k]; }); }
+  function programar(){ marcar("Guardando…"); clearTimeout(timer); timer = setTimeout(function(){ guardar(false); }, 1200); }
+  function guardar(fin, ok, fallo){
+    clearTimeout(timer);
+    limpiarOcultas();
+    try{ localStorage.setItem("fp-" + D.t, JSON.stringify(A)); }catch(e){}
+    var bien = function(r){ marcar("Guardado ✓"); if(ok) ok(r); };
+    var mal = function(er){ marcar("Sin conexión: se reintentará"); if(fallo) fallo(er); };
+    if(typeof D.enviar === "function") D.enviar(D.t, A, !!fin, bien, mal);   // página estática
+    else google.script.run.withSuccessHandler(bien).withFailureHandler(mal).guardarForm(D.t, A, !!fin);
+  }
+
+  /* ----- preguntas ----- */
+  function pregunta(key, texto, esc, fuerte){
+    var card = h("div", { class: "preg" + (fuerte ? " fuerte" : "") });
+    card.appendChild(h("div", { class: "q", text: texto }));
+    var ayuda = h("div", { class: "ayuda", role: "alert" });
+    function actual(){ return A.radio[key]; }
+    function aviso(){
+      if(key === "phq9|8" && Number(actual()) > 0) textoAyuda(ayuda); else ayuda.textContent = "";
+    }
+    var caja;
+    if(esc.length > 12){
+      caja = h("div", { class: "ops" });
+      var sel = h("select", { "aria-label": texto },
+        h("option", { value: "", text: "Elija una opción" }),
+        esc.map(function(o, i){ return h("option", { value: String(i), text: o.t }); }));
+      sel.value = actual() === undefined ? "" : String(esc.map(function(o){ return String(o.v); }).indexOf(String(actual())));
+      sel.onchange = function(){
+        if(sel.value === "") delete A.radio[key]; else A.radio[key] = esc[Number(sel.value)].v;
+        despues();
+      };
+      caja.appendChild(sel);
+    }else{
+      var num = esc.every(function(o){ return String(o.t).length <= 2; });
+      var largo = esc.some(function(o){ return String(o.t).length > 16; }) || esc.length > 5;
+      caja = h("div", { class: "ops " + (num ? "num" : largo ? "v" : "h"), role: "group", "aria-label": texto });
+      var botones = esc.map(function(o){
+        var b = h("button", { type: "button", text: o.t, "aria-pressed": String(actual() !== undefined && String(actual()) === String(o.v)) });
+        b.onclick = function(){
+          if(actual() !== undefined && String(actual()) === String(o.v)) delete A.radio[key]; else A.radio[key] = o.v;
+          botones.forEach(function(x, i){ x.setAttribute("aria-pressed", String(actual() !== undefined && String(actual()) === String(esc[i].v))); });
+          despues();
+        };
+        return b;
+      });
+      botones.forEach(function(b){ caja.appendChild(b); });
+    }
+    function despues(){
+      aviso(); programar();
+      if(CONTROL[key]){ var y = window.pageYOffset; pintar(true); window.scrollTo(0, y); }
+    }
+    card.appendChild(caja); card.appendChild(ayuda);
+    aviso();
+    return card;
+  }
+  function multi(b){
+    var key = b.q + "|" + b.i;
+    var sel = A.multi[key] = A.multi[key] || [];
+    var card = h("div", { class: "preg" }, h("div", { class: "q", text: b.t }));
+    var caja = h("div", { class: "ops v", role: "group", "aria-label": b.t });
+    b.ops.forEach(function(o){
+      var btn = h("button", { type: "button", text: o.t, "aria-pressed": String(sel.indexOf(o.v) >= 0) });
+      btn.onclick = function(){
+        var i = sel.indexOf(o.v);
+        if(i >= 0) sel.splice(i, 1); else sel.push(o.v);
+        btn.setAttribute("aria-pressed", String(sel.indexOf(o.v) >= 0));
+        programar();
+      };
+      caja.appendChild(btn);
+    });
+    card.appendChild(caja);
+    return card;
+  }
+  function libre(b){
+    var key = b.q + "|" + b.i;
+    var ta = h("textarea", { maxlength: "800", rows: "3", "aria-label": b.t });
+    ta.value = A.txt[key] || "";
+    ta.oninput = function(){ if(ta.value) A.txt[key] = ta.value; else delete A.txt[key]; programar(); };
+    return h("div", { class: "preg" }, h("div", { class: "q", text: b.t }), ta);
+  }
+  function mapa(b){
+    var key = b.q + "|" + b.i;
+    var sel = A.multi[key] = A.multi[key] || [];
+    var M = def.mapa || { zonas: [], figura: {} };
+    var marcadas = h("div", { class: "marcadas" });
+    function nombre(k){ for(var i = 0; i < M.zonas.length; i++) if(M.zonas[i].k === k) return M.zonas[i].t; return k; }
+    function texto(){
+      marcadas.textContent = sel.length ? "Marcó: " + sel.map(function(k){ return nombre(k).toLowerCase(); }).join(", ") + "." : "Toque las zonas donde le duele. Toque otra vez para quitarla.";
+    }
+    var todas = [];
+    function alternar(k){
+      var i = sel.indexOf(k);
+      if(i >= 0) sel.splice(i, 1); else sel.push(k);
+      todas.forEach(function(s){ if(s.getAttribute("data-k") === k) s.setAttribute("class", "zona" + (sel.indexOf(k) >= 0 ? " sel" : "")); });
+      texto(); programar();
+    }
+    var caja = h("div", { class: "mapas" });
+    [["frente", "De frente"], ["espalda", "De espaldas"]].forEach(function(v){
+      var svg = document.createElementNS(NS, "svg");
+      svg.setAttribute("viewBox", "0 0 160 340");
+      svg.setAttribute("role", "group"); svg.setAttribute("aria-label", "Mapa del cuerpo " + v[1].toLowerCase());
+      (M.figura[v[0]] || []).forEach(function(f){
+        var s = document.createElementNS(NS, f[1] === "e" ? "ellipse" : "rect");
+        if(f[1] === "e"){ s.setAttribute("cx", f[2]); s.setAttribute("cy", f[3]); s.setAttribute("rx", f[4]); s.setAttribute("ry", f[5]); }
+        else{ s.setAttribute("x", f[2]); s.setAttribute("y", f[3]); s.setAttribute("width", f[4]); s.setAttribute("height", f[5]); s.setAttribute("rx", f[6] || 0); }
+        s.setAttribute("data-k", f[0]);
+        s.setAttribute("class", "zona" + (sel.indexOf(f[0]) >= 0 ? " sel" : ""));
+        s.setAttribute("tabindex", "0"); s.setAttribute("role", "button"); s.setAttribute("aria-label", nombre(f[0]));
+        s.addEventListener("click", function(){ alternar(f[0]); });
+        s.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); alternar(f[0]); } });
+        svg.appendChild(s); todas.push(s);
+      });
+      var lados = v[0] === "frente" ? ["D", "I"] : ["I", "D"];
+      [[8, lados[0]], [146, lados[1]]].forEach(function(l){
+        var t = document.createElementNS(NS, "text");
+        t.setAttribute("x", l[0]); t.setAttribute("y", 336); t.setAttribute("font-size", 11); t.setAttribute("font-weight", 700); t.setAttribute("fill", "#566976");
+        t.textContent = l[1]; svg.appendChild(t);
+      });
+      caja.appendChild(h("figure", null, svg, h("figcaption", { text: v[1] })));
+    });
+    texto();
+    return h("div", null, caja, marcadas);
+  }
+  function bloque(b){
+    if(b.tipo === "texto") return h("p", { class: "intro", text: b.t });
+    if(b.tipo === "mapa") return mapa(b);
+    if(b.tipo === "tabla"){
+      var w = h("div", null, b.pregunta ? h("h2", { text: b.pregunta }) : null);
+      b.items.forEach(function(it){ var k = b.q + "|" + it.i; if(visible(k)) w.appendChild(pregunta(k, it.t, b.esc)); });
+      return w;
+    }
+    if(b.tipo === "preg"){ var k = b.q + "|" + b.i; return visible(k) ? pregunta(k, b.t, b.esc, b.fuerte) : null; }
+    if(b.tipo === "multi") return multi(b);
+    if(b.tipo === "libre") return libre(b);
+    return null;
+  }
+
+  /* ----- pantallas ----- */
+  function ir(i){ pantalla = i; pintar(); window.scrollTo(0, 0); }
+  function primeraPendiente(){
+    for(var i = 0; i < secs.length; i++) if(sinContestar(secs[i]).length) return i;
+    return secs.length;
+  }
+  function hayRespuestas(){
+    return Object.keys(A.radio).length + Object.keys(A.multi).filter(function(k){ return A.multi[k].length; }).length + Object.keys(A.txt).length > 0;
+  }
+  function cabecera(){
+    var en = pantalla >= 0 && pantalla < secs.length;
+    return h("div", { class: "cab" },
+      h("div", { class: "doc", text: D.doc || "Consultorio" }),
+      h("div", { class: "sub", text: "Formulario previo a su consulta" }),
+      en ? h("div", { class: "barra" }, h("div", { class: "bar-i", style: "width:" + Math.round(pantalla / Math.max(1, secs.length) * 100) + "%" })) : null);
+  }
+  function inicio(){
+    var seguir = hayRespuestas();
+    return [h("div", { class: "card" },
+      h("h1", { text: seguir ? "Continúe donde se quedó" : "Antes de empezar" }),
+      h("p", { text: "Este formulario adelanta la información que su doctor necesita para atenderla mejor. Contéstelo con calma, desde su teléfono." }),
+      h("ul", null,
+        h("li", { text: "Son " + secs.length + " partes. Puede tardar un rato, y no tiene que hacerlo de una vez." }),
+        h("li", { text: "Lo que va contestando se guarda solo. Si lo deja a medias, vuelva a abrir este mismo enlace y sigue donde se quedó." }),
+        h("li", { text: "Si una pregunta no le aplica, déjela en blanco." }),
+        h("li", { text: "Solo su doctor ve sus respuestas." }),
+        h("li", { text: "No es para urgencias: si tiene una emergencia, llame al 911 o vaya a la emergencia más cercana." })))
+    , pie(null, h("button", { class: "g", type: "button", text: seguir ? "Continuar" : "Comenzar", onclick: function(){ ir(seguir ? Math.min(primeraPendiente(), secs.length) : 0); } }))];
+  }
+  function seccion(i){
+    var s = secs[i];
+    var card = h("div", { class: "card" },
+      h("div", { class: "paso", text: "Parte " + (i + 1) + " de " + secs.length }),
+      h("h1", { text: s.t }),
+      s.intro ? h("p", { class: "intro", text: s.intro }) : null);
+    s.bloques.forEach(function(b){ var x = bloque(b); if(x) card.appendChild(x); });
+    return [card, pie(
+      h("button", { class: "g sec", type: "button", text: "Atrás", onclick: function(){ guardar(false); ir(i === 0 ? -1 : i - 1); } }),
+      h("button", { class: "g", type: "button", text: i === secs.length - 1 ? "Revisar" : "Siguiente", onclick: function(){ guardar(false); ir(i + 1); } }))];
+  }
+  function revision(){
+    var faltan = [];
+    secs.forEach(function(s, i){ var n = sinContestar(s).length; if(n) faltan.push({ i: i, n: n, t: s.t }); });
+    var card = h("div", { class: "card" }, h("h1", { text: "Revise y envíe" }));
+    if(faltan.length){
+      card.appendChild(h("p", { text: "Le quedaron preguntas sin contestar. Si no le aplican, puede enviarlo así; si quiere contestarlas, toque «Ir»." }));
+      faltan.forEach(function(f){
+        card.appendChild(h("div", { class: "falta" }, h("span", { text: f.t + " · " + f.n + " sin contestar" }),
+          h("button", { class: "g sec", type: "button", text: "Ir", onclick: function(){ ir(f.i); } })));
+      });
+    }else card.appendChild(h("div", { class: "msg m-ok", text: "Contestó todas las preguntas. Gracias." }));
+    if(urgente()){ var a = h("div", { class: "ayuda", role: "alert" }); textoAyuda(a); card.appendChild(a); }
+    var err = h("div", { id: "err" });
+    card.appendChild(err);
+    var enviar = h("button", { class: "g ok", type: "button", text: "Enviar" });
+    enviar.onclick = function(){
+      if(enviando) return;
+      enviando = true; enviar.disabled = true; enviar.textContent = "Enviando…"; err.textContent = "";
+      guardar(true, function(){ enviando = false; ir(secs.length + 1); }, function(er){
+        enviando = false; enviar.disabled = false; enviar.textContent = "Enviar";
+        err.className = "msg m-er"; err.textContent = (er && er.message) || "No se pudo enviar. Revise su conexión e intente de nuevo.";
+      });
+    };
+    return [card, pie(h("button", { class: "g sec", type: "button", text: "Atrás", onclick: function(){ ir(secs.length - 1); } }), enviar)];
+  }
+  function fin(texto){
+    var card = h("div", { class: "card" }, h("h1", { text: "¡Gracias!" }),
+      h("div", { class: "msg m-ok", text: texto || "Recibimos su formulario. Su doctor lo revisará antes de su consulta." }));
+    if(urgente()){ var a = h("div", { class: "ayuda", role: "alert" }); textoAyuda(a); card.appendChild(a); }
+    card.appendChild(h("p", { text: "Ya puede cerrar esta página." }));
+    return [card];
+  }
+  function pie(izq, der){
+    return h("div", { class: "pie" }, h("div", { class: "in" }, izq, h("div", { class: "est", id: "est", text: estado || "" }), der));
+  }
+  function pintar(){
+    raiz.innerHTML = "";
+    raiz.appendChild(cabecera());
+    var partes;
+    if(D.estado === "invalido") partes = [h("div", { class: "card" }, h("div", { class: "msg m-er", text: "Este enlace no es válido o ya no está disponible. Comuníquese con el consultorio." }))];
+    else if(D.estado === "enviado") partes = fin("Ya recibimos su formulario. Gracias.");
+    else if(pantalla === -1) partes = inicio();
+    else if(pantalla < secs.length) partes = seccion(pantalla);
+    else if(pantalla === secs.length) partes = revision();
+    else partes = fin();
+    partes.forEach(function(x){ raiz.appendChild(x); });
+  }
+  pintar();
+}
+(function(){
+  var EXEC = "https://script.google.com/macros/s/AKfycbypVRvQGAY6c7vxi4x59hibF-q_SWOL6hqPQhsu2OeDaauB32_pAhOq2T65ViCPwbP9UA/exec";
+  var raiz = document.getElementById("app");
+  var t = ""; try{ t = new URLSearchParams(location.search).get("f") || ""; }catch(e){}
+  function aviso(texto, reintento){
+    raiz.innerHTML = "";
+    var c = document.createElement("div"); c.className = "card";
+    var m = document.createElement("div"); m.className = "msg m-er"; m.textContent = texto; c.appendChild(m);
+    if(reintento){ var b = document.createElement("button"); b.type = "button"; b.className = "g"; b.textContent = "Intentar de nuevo"; b.onclick = cargar; c.appendChild(b); }
+    raiz.appendChild(c);
+  }
+  /* guarda por fetch; text/plain evita la consulta previa de CORS que Google no contesta */
+  function enviar(codigo, a, fin, ok, mal){
+    fetch(EXEC, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ op: "fguardar", t: codigo, a: a, fin: fin }) })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if(j && j.ok) ok(j); else mal({ message: (j && j.error) || "No se pudo enviar. Revise su conexión e intente de nuevo." }); })
+      .catch(function(){ mal(null); });
+  }
+  function cargar(){
+    raiz.innerHTML = "";
+    var c = document.createElement("div"); c.className = "cab"; var d = document.createElement("div"); d.className = "doc"; d.textContent = "Cargando…"; c.appendChild(d); raiz.appendChild(c);
+    fetch(EXEC + "?op=fdef&f=" + encodeURIComponent(t))
+      .then(function(r){ return r.json(); })
+      .then(function(D){ D.enviar = enviar; clienteForm_(D); })
+      .catch(function(){ aviso("No pudimos abrir el formulario. Revise su conexión e intente de nuevo.", true); });
+  }
+  cargar();
+})();</script></body></html>
